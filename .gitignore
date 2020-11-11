@@ -1,0 +1,4 @@
+# Ignore client VSCode settings
+.vscode
+# Ignore pycache folders
+.pycache

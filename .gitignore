@@ -2,3 +2,5 @@
 .vscode
 # Ignore pycache folders
 .pycache
+# Ignore twitter data folder
+twitter_stream_2020_03_01

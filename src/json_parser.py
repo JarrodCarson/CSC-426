@@ -1,6 +1,18 @@
 '''
     Project: CSC 426 Data Mining
     Authors: Jarrod Carson & Trinity Stroud
-    Date created: 11/10/2020
-    Date last modified: 11/10/2020
 '''
+
+import json
+
+def parse(json_file):
+    '''
+    Parses a given JSON file.
+
+    Vars:
+        json_file:  A string filepath or an open file object
+    Returns:
+        Dictionary containing JSON data.
+    '''
+    
+    pass

@@ -10,11 +10,11 @@ from decompress_files import decompress
 def main():
     system("cls")
 
-    tweet_loc = path.join("twitter_stream_2020_03_01", "03", "01")
-    print(f"Initializing Data Path: {tweet_loc}")
-    
+    if path.exists(path.join("resources", "twitter_stream_2020_03_01.json")):
+        print("Parsed file found. Skipping decompression/parsing")
+        exit()
     decompress()
-    parse(tweet_loc)
+    parse(path.join("resources", "twitter_stream_2020_03_01"))
 
 
 if __name__ == "__main__":

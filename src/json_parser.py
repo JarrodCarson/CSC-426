@@ -79,10 +79,17 @@ def __filter_attr(json_file):
 
     with open(json_file, 'r') as f:
         for line in f:
-            json_dict = json.loads(line)
+            try:
+                json_dict = json.loads(line)
+            # Filters out broken JSON strings
+            except json.JSONDecodeError:
+                continue
+            except:
+                raise Exception(f"Something else went wrong. Please inspect in debugger\nFile: {json_file}")
             filtered_dict = {key: json_dict[key] for key in whitelist if key in json_dict}
             if filtered_dict:
                 filtered_lines.append(json.dumps(filtered_dict).strip() + "\n")
+    os.remove(json_file)
     return filtered_lines
 
 
@@ -114,7 +121,7 @@ def parse(json_file):
     else:
         raise FileNotFoundError(f"Path {json_file} does not exist.")
     
-    out_file = open("resources/parsed_json.json", "w")
+    out_file = open("resources/twitter_stream_2020_03_01.json", "w")
     
     size = len(files)
     sys.stdout.write(f"[ ] Parsing files... ")

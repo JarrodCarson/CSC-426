@@ -1,6 +1,6 @@
 '''
     Project: CSC 426 Data Mining
-    Authors: Jarrod Carson & Trinity Stroud
+    Authors: Jarrod Carson
 '''
 
 import json

@@ -5,12 +5,15 @@
 from os import path, system
 #pylint: disable=import-error
 from json_parser import parse
+from decompress_files import decompress
 
 def main():
     system("cls")
 
     tweet_loc = path.join("twitter_stream_2020_03_01", "03", "01")
     print(f"Initializing Data Path: {tweet_loc}")
+    
+    decompress()
     parse(tweet_loc)
 
 

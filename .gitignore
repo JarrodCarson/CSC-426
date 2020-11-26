@@ -1,4 +1,10 @@
 # Ignore client VSCode settings
 .vscode
 # Ignore pycache folders
-.pycache
+**/__pycache__*
+# Ignore twitter data folder
+twitter_stream_2020_03_01
+# Ignore resources folder
+resources
+# Ignores local notes
+notes.md

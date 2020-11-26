@@ -4,3 +4,5 @@
 .pycache
 # Ignore twitter data folder
 twitter_stream_2020_03_01
+# Ignore program resources
+resources

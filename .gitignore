@@ -4,6 +4,7 @@
 src/__pycache__
 # Ignore twitter data folder
 twitter_stream_2020_03_01
+twitter_stream_2020_03_01.tar
 # Ignore resources folder
 resources
 # Ignores local notes

@@ -15,8 +15,15 @@ def main():
     # Used for timing function execution time
     timing = False
 
+    # Check if the files have been parsed
     if path.exists(path.join("resources", "twitter_stream_2020_03_01.json")):
         print("Parsed file found. Skipping decompression/parsing")
+    
+    # Check if the files have been decompressed
+    elif path.exists(path.join("resources", "twitter_stream_2020_03_01")):
+        parse(path.join("resources", "twitter_stream_2020_03_01"))
+    
+    # Check if the files have not been decompressed
     else:
         decompress()
         parse(path.join("resources", "twitter_stream_2020_03_01"))

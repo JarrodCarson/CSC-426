@@ -51,7 +51,7 @@ def __filter_attr(json_file):
         #'filter_level',
         #'geo',
         #'id',
-        #'id_str',
+        'id_str',
         #'in_reply_to_screen_name',
         #'in_reply_to_status_id',
         'in_reply_to_status_id_str',
@@ -87,7 +87,7 @@ def __filter_attr(json_file):
             except:
                 raise Exception(f"Something else went wrong. Please inspect in debugger\nFile: {json_file}")
             filtered_dict = {key: json_dict[key] for key in whitelist if key in json_dict}
-            if filtered_dict:
+            if filtered_dict and filtered_dict['lang'] == 'en':
                 filtered_lines.append(json.dumps(filtered_dict).strip() + "\n")
     os.remove(json_file)
     return filtered_lines

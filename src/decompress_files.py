@@ -8,12 +8,12 @@ import os, os.path
 import sys
 from shutil import copy
 
-def decompress():
+def decompress(progress_out=False):
     '''
     Decompresses all .json.bz2 files into readable json files
 
     Vars:
-        None
+        progress_out:   Bool determining if detailed progress output should be displayed
     Returns:
         None
     '''
@@ -31,16 +31,20 @@ def decompress():
     # List of directories in the current directory (represents hours)
     dirs = [name for name in os.listdir(olddirpath) if not os.path.isfile(name)]
 
-    size = len(dirs)
-    sys.stdout.write(f"[ ] Decompressing files... ")
-    sys.stdout.flush()
+    if progress_out:
+        size = len(dirs)
+        sys.stdout.write(f"[ ] Decompressing files... ")
+        sys.stdout.flush()
+    else:
+        print("Decompressing files... ", end='')
 
     # For each directory...
     for i, dirname in enumerate(dirs):
 
-        s = f"%.3F" % (i/float(size) * 100) + "%"
-        sys.stdout.write(s)
-        sys.stdout.flush()
+        if progress_out:
+            s = f"%.3F" % (i/float(size) * 100) + "%"
+            sys.stdout.write(s)
+            sys.stdout.flush()
 
         path = os.path.join(olddirpath, dirname)
         # List of files in the current subdirectory
@@ -74,8 +78,12 @@ def decompress():
             file.close()
             newfile.close()
 
-        sys.stdout.write("\b" * len(s))
+        if progress_out:
+            sys.stdout.write("\b" * len(s))
 
-    sys.stdout.write("\r[+] Decompression Complete 100.000%\n")
-    sys.stdout.flush()
+    if progress_out:
+        sys.stdout.write("\r[+] Decompression Complete 100.000%\n")
+        sys.stdout.flush()
+    else:
+        print("Done")
         

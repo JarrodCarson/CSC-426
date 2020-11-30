@@ -93,12 +93,14 @@ def __filter_attr(json_file):
     return filtered_lines
 
 
-def parse(json_file):
+def parse(json_file, progress_out=False):
     '''
     Parses a given JSON file.
 
     Vars:
-        json_file:  Path to a JSON file or folder containing JSON files
+        json_file:      Path to a JSON file or folder containing JSON files
+        progress_out:   Bool determining if detailed progress output should be displayed
+
     Returns:
         Dictionary containing JSON data.
     '''
@@ -106,14 +108,20 @@ def parse(json_file):
 
     # If given directory
     if os.path.isdir(json_file):
-        sys.stdout.write("[ ] Recursively Collecting Files...")
-        sys.stdout.flush()
+        if progress_out:
+            sys.stdout.write("[ ] Recursively Collecting Files...")
+            sys.stdout.flush()
+        else:
+            print("Recursively Collecting Files... ", end='')
 
         files = __collect_json(json_file)
 
-        sys.stdout.write("\r")
-        sys.stdout.write("[+] Recursively Collecting Files -- Complete\n")
-        sys.stdout.flush()
+        if progress_out:
+            sys.stdout.write("\r")
+            sys.stdout.write("[+] Recursively Collecting Files -- Complete\n")
+            sys.stdout.flush()
+        else:
+            print("Done")
     # If given file path
     elif os.path.isfile(json_file):
         files.append(json_file)
@@ -123,20 +131,30 @@ def parse(json_file):
     
     out_file = open("resources/twitter_stream_2020_03_01.json", "w")
     
-    size = len(files)
-    sys.stdout.write(f"[ ] Parsing files... ")
-    sys.stdout.flush()
+    if progress_out:
+        size = len(files)
+        sys.stdout.write(f"[ ] Parsing files... ")
+        sys.stdout.flush()
+    else:
+        print("Parsing files... ", end='')
 
     for i, f in enumerate(files):
-        # Progress bar
-        s = f"%.3F" % (i/float(size) * 100) + "%"
-        sys.stdout.write(s)
-        sys.stdout.flush()
+
+        if progress_out:
+            # Progress bar
+            s = f"%.3F" % (i/float(size) * 100) + "%"
+            sys.stdout.write(s)
+            sys.stdout.flush()
 
         out_file.writelines(__filter_attr(f))
-        sys.stdout.write("\b" * len(s))
 
-    sys.stdout.write("\r[+] Parsing Complete 100.000%\n")
-    sys.stdout.flush()
+        if progress_out:
+            sys.stdout.write("\b" * len(s))
+
+    if progress_out:
+        sys.stdout.write("\r[+] Parsing Complete 100.000%\n")
+        sys.stdout.flush()
+    else:
+        print("Done")
 
     out_file.close()

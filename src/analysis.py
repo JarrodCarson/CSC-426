@@ -8,12 +8,14 @@ import os
 import pandas
 import sys
 
-def frequency(chunk_size = 2500):
+def frequency(chunk_size = 2500, progress_out=False):
     '''
     Performs frequency analysis on the data.
 
     Vars:
-        chunk_size: Number of lines represented by each frequency dict. Affects execution time
+        chunk_size:     Number of lines represented by each frequency dict. Affects execution time
+        progress_out:   Bool determining if detailed progress output should be displayed
+
     Returns:
         Dictionary of words:frequency
     '''
@@ -36,28 +38,34 @@ def frequency(chunk_size = 2500):
         whitelist = [word.strip().lower() for word in open("resources\\keywords.txt", 'r')]
 
     for f in parsed_json:
-        sys.stdout.write(f"[ ] Frequency analysis on {f}:       ")
-        sys.stdout.flush()
+        if progress_out:
+            sys.stdout.write(f"[ ] Frequency analysis on {f}:       ")
+            sys.stdout.flush()
 
-        # Number of lines in a file. Used for progress display
-        num_lines = 0
-        # Progress percentage
-        s = '0.000%'
-        # Obtaining file size
-        with open(f, 'r') as temp:
-            for _ in temp:
-                num_lines += 1
+            # Number of lines in a file. Used for progress display
+            num_lines = 0
+            # Progress percentage
+            s = '0.000%'
+            # Obtaining file size
+            with open(f, 'r') as temp:
+                for _ in temp:
+                    num_lines += 1
+
+        else:
+            print(f"Frequency analysis on {f}... ", end='')
 
 
         for i, line in enumerate(open(f, 'r')):
 
             # Chunking size. Determines how many lines each freq. dict. represents
             if i % chunk_size == 0:
-                # Progress Output
-                sys.stdout.write("\b" * len(s))
-                s = f"%.3F" % (i/float(num_lines) * 100) + "%"
-                sys.stdout.write(s)
-                sys.stdout.flush()
+                if progress_out:
+                    # Progress Output
+                    sys.stdout.write("\b" * len(s))
+                    s = f"%.3F" % (i/float(num_lines) * 100) + "%"
+                    sys.stdout.write(s)
+                    sys.stdout.flush()
+
                 word_freqs.append(word_freq)
                 word_freq = {}
 
@@ -81,19 +89,23 @@ def frequency(chunk_size = 2500):
             word_freq = {**word_freq, 
                          **{word: (text.count(word) if word not in word_freq else word_freq[word] + text.count(word)) for word in text}}
 
-        sys.stdout.write("\b" * len(f) + f"\r[+] Frequency analysis complete 100.000%" + " " * len(f) + "\n")
-        sys.stdout.flush()
+        if progress_out:
+            sys.stdout.write("\b" * len(f) + f"\r[+] Frequency analysis complete 100.000%" + " " * len(f) + "\n")
+            sys.stdout.flush()
+        else:
+            print("Done")
 
-    sys.stdout.write(f"\r[ ] Consolidating results...")
-    sys.stdout.flush()
+    if progress_out:
+        sys.stdout.write(f"\r[ ] Consolidating results...")
+        sys.stdout.flush()
+    else:
+        print("Consolidating results... ", end='')
 
     # Combining all individual freq. dicts. into a single dict.
     freq_final = {}
     for freq in word_freqs:
         freq_final = {**freq_final, **freq}
 
-    sys.stdout.write(f"\r[+] Consolidation complete\n")
-    sys.stdout.flush()
     # Writing frequency analysis results to JSON file
     with open("resources\\res_freq_analysis.json", 'w') as out_file:
         out_file.write(json.dumps(freq_final, indent=4))
@@ -105,18 +117,13 @@ def frequency(chunk_size = 2500):
             del tweet["ID"]
             tweet_scores[tweet_id] = tweet
 
-
     # Writing tweet scores to JSON file
     with open("resources\\res_tweet_scores.json", 'w') as out_file:
         out_file.write(json.dumps(tweet_scores, indent=4))
+
+    if progress_out:
+        sys.stdout.write(f"\r[+] Consolidation complete\n")
+        sys.stdout.flush()
+    else:
+        print("Done")
     
-
-def preprocess(data):
-    '''
-    Preprocesses data.
-
-    Vars:
-        data:   Pandas DF, List, or Dictionary containing twitter data
-    Returns:
-        Preprocessed DF, List, or Dictionary
-    '''

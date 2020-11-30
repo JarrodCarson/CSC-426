@@ -22,6 +22,8 @@ def frequency(chunk_size = 2500):
     whitelist = []
     # List of multiple frequency dictionary. Splitting them up improves analysis speed
     word_freqs = []
+    # Ranks tweets by scores as sorting a dictionary is complicated
+    ranks = {}
     # Individual frequency analysis dictionary
     word_freq = {}
     # Scores for each tweet. i.e. the number of keywords that occur for a given tweet
@@ -63,8 +65,19 @@ def frequency(chunk_size = 2500):
             line = json.loads(line)
             text = [word.lower().strip() for word in whitelist if word in line['text']]
             if text:
-                tweet_scores[line["id_str"]] = {"Keywords": {word: text.count(word) for word in text},
-                                               "Score": len(text)}
+                tweet = {"ID": line["id_str"],
+                         "Created": line["created_at"],
+                         "Text": line["text"],
+                         "Keywords": {word: text.count(word) for word in text},
+                         "Coordinates": line["coordinates"],
+                         "Place": line["place"],
+                         "Score": len(text)}
+
+                if tweet["Score"] not in ranks:
+                    ranks[tweet["Score"]] = []
+
+                ranks[tweet["Score"]].append(tweet)
+
             word_freq = {**word_freq, 
                          **{word: (text.count(word) if word not in word_freq else word_freq[word] + text.count(word)) for word in text}}
 
@@ -84,6 +97,14 @@ def frequency(chunk_size = 2500):
     # Writing frequency analysis results to JSON file
     with open("resources\\res_freq_analysis.json", 'w') as out_file:
         out_file.write(json.dumps(freq_final, indent=4))
+
+    # Sorting tweets by rank
+    for score in list(ranks.keys())[::-1]:
+        for tweet in ranks[score]:
+            tweet_id = tweet["ID"]
+            del tweet["ID"]
+            tweet_scores[tweet_id] = tweet
+
 
     # Writing tweet scores to JSON file
     with open("resources\\res_tweet_scores.json", 'w') as out_file:
